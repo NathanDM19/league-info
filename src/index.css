@@ -1,0 +1,12 @@
+body {
+  /* margin: 0; */
+  padding: 0;
+  font-family: Helvetica;
+}
+button.info {
+  float: right;
+}
+#summonerIcon {
+  max-width: 150px;
+  max-height: 150px;
+}

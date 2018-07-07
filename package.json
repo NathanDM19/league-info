@@ -1,0 +1,24 @@
+{
+  "name": "league-stats",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "leaguejs": "^1.9.0",
+    "nodemon": "^1.17.5",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "1.1.4",
+    "riot-api-nodejs": "^2.1.0",
+    "socket.io": "^2.1.1"
+  },
+  "scripts": {
+    "start": "nodemon server.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
