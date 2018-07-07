@@ -16,6 +16,9 @@ const uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongod
 mongoose.connect(uristring, function (err, res) {
   if (err) {
     console.log ('ERROR connecting to: ' + uristring + '. ' + err);
+    setInterval(function() {
+      io.emit('mongoose', {uristring, err})
+    }, 1000)
   } else {
     console.log ('Succeeded connected to: ' + uristring);
     setInterval(function() {
