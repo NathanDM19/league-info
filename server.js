@@ -9,6 +9,21 @@ const League = require('leaguejs')
 process.env.LEAGUE_API_KEY = "RGAPI-30a650bc-20a5-4619-8cb4-cccddf0c906b"
 const api = new League(process.env.LEAGUE_API_KEY, { PLATFORM_ID: "oc1" })
 //https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/Cre?api_key=RGAPI-30a650bc-20a5-4619-8cb4-cccddf0c906b
+
+// Mongoose
+const mongoose = require('mongoose');
+const uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/HelloMongoose';
+mongoose.connect(uristring, function (err, res) {
+  if (err) {
+    console.log ('ERROR connecting to: ' + uristring + '. ' + err);
+  } else {
+    console.log ('Succeeded connected to: ' + uristring);
+    setInterval(function() {
+      socket.emit('mongoose', uristring)
+    }, 2000)
+  }
+});
+
 app.use(express.static('src'));
 server.listen(PORT, () => {
   console.log(`Webserver listening on port ${PORT}`);
@@ -30,9 +45,10 @@ io.on('connection', socket => {
   // Match search
   socket.on('match', data => {
     let results = {};
-    results.champion = data.champion;
+    let champion = data.champion;
     api.Match.gettingById(data.id).then(data => {
-      results.match = data
+      results = data;
+      results.champion = champion;
       socket.emit('match', results)
     })
   })

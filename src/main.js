@@ -9,6 +9,9 @@ $('document').ready(() => {
   });
   main = $('#main')
 })
+socket.on('mongoose', data) => {
+  console.log("Connected to " + data);
+}
 socket.on('static', data => {
   champions = data.champions.data
   summonerSpells = data.summonerSpells.data
@@ -50,14 +53,14 @@ socket.on('match', data => {
   let summonerNames = { 1: [], 2: [] };
   let summonerInfo = { 1: [], 2: [] };
   // Win / loss Check
-  for (let i = 0; i < data.match.participantIdentities.length; i++) {
-    let user = data.match.participantIdentities[i]
+  for (let i = 0; i < data.participantIdentities.length; i++) {
+    let user = data.participantIdentities[i]
     if (user.player.summonerId === userId) {
-      userInfo = data.match.participants[i];
-      let teamId = data.match.participants[i].teamId
-      for (let i = 0; i < data.match.teams.length; i++) {
-        if (teamId === data.match.teams[i].teamId) {
-          win = data.match.teams[i].win
+      userInfo = data.participants[i];
+      let teamId = data.participants[i].teamId
+      for (let i = 0; i < data.teams.length; i++) {
+        if (teamId === data.teams[i].teamId) {
+          win = data.teams[i].win
           break;
         }
       }
@@ -74,18 +77,18 @@ socket.on('match', data => {
   }
   console.log(userInfo)
   // Assigning users to teams
-  for (let i = 0; i < data.match.participantIdentities.length; i++) {
-    if (data.match.participants[i].teamId == 100) {
-      summonerNames[1].push(data.match.participantIdentities[i].player.summonerName)
-      summonerInfo[1].push(data.match.participants[i])
+  for (let i = 0; i < data.participantIdentities.length; i++) {
+    if (data.participants[i].teamId == 100) {
+      summonerNames[1].push(data.participantIdentities[i].player.summonerName)
+      summonerInfo[1].push(data.participants[i])
     } else {
-      summonerNames[2].push(data.match.participantIdentities[i].player.summonerName)
-      summonerInfo[2].push(data.match.participants[i])
+      summonerNames[2].push(data.participantIdentities[i].player.summonerName)
+      summonerInfo[2].push(data.participants[i])
     }
   }
   // Match div
   $('#matchHistory').append(`
-  <div class="match ${win}" id="${data.match.gameId}">
+  <div class="match ${win}" id="${data.gameId}">
     <div class="match1">
       <img class="championIcon" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/champion/${data.champion}.png">
     </div>
@@ -100,26 +103,26 @@ socket.on('match', data => {
         ${parseFloat((userInfo.stats.kills + userInfo.stats.assists) / userInfo.stats.deaths).toFixed(2)}:1 KDA
       </p>
     </div>
-    <div id="${data.match.gameId}Items" class="matchItems">
+    <div id="${data.gameId}Items" class="matchItems">
     </div>
     <div class="matchTrinket">
       <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/${userInfo.stats.item6}.png">
     </div>
-    <div id="${data.match.gameId}summonersLeft" class="matchSummoners"></div>
-    <div id="${data.match.gameId}ChampsLeft" class="matchSummonerChamps"></div>
-    <div id="${data.match.gameId}summonersRight" class="matchSummoners"></div>
-    <div id="${data.match.gameId}ChampsRight" class="matchSummonerChamps"></div>
+    <div id="${data.gameId}summonersLeft" class="matchSummoners"></div>
+    <div id="${data.gameId}ChampsLeft" class="matchSummonerChamps"></div>
+    <div id="${data.gameId}summonersRight" class="matchSummoners"></div>
+    <div id="${data.gameId}ChampsRight" class="matchSummonerChamps"></div>
   </div>`)
   // Items
   for (let i = 0; i < 6; i++) {
     if (userInfo.stats[`item${i}`] != 0) {
       let itemId = userInfo.stats[`item${i}`];
-      $(`#${data.match.gameId}Items`).append(`<img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/${itemId}.png">`)
+      $(`#${data.gameId}Items`).append(`<img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/${itemId}.png">`)
     }
   }
   // Team 1 players
   for (let i = 0; i < summonerNames[1].length; i++) {
-    $(`#${data.match.gameId}summonersLeft`).append(`<p class="playerName">${summonerNames[1][i]}</p>`)
+    $(`#${data.gameId}summonersLeft`).append(`<p class="playerName">${summonerNames[1][i]}</p>`)
     let champion;
     for (key in champions) {
       if (champions[key].key == summonerInfo[1][i].championId) {
@@ -127,12 +130,12 @@ socket.on('match', data => {
         break;
       }
     }
-    $(`#${data.match.gameId}ChampsLeft`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/champion/${champion}.png">`)
+    $(`#${data.gameId}ChampsLeft`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/champion/${champion}.png">`)
   }
 
   // Team 2 players
   for (let i = 0; i < summonerNames[2].length; i++) {
-    $(`#${data.match.gameId}summonersRight`).append(`<p class="playerName">${summonerNames[2][i]}</p>`)
+    $(`#${data.gameId}summonersRight`).append(`<p class="playerName">${summonerNames[2][i]}</p>`)
     let champion;
     for (key in champions) {
       if (champions[key].key == summonerInfo[2][i].championId) {
@@ -140,11 +143,11 @@ socket.on('match', data => {
         break;
       }
     }
-    $(`#${data.match.gameId}ChampsRight`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/champion/${champion}.png">`)
+    $(`#${data.gameId}ChampsRight`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/champion/${champion}.png">`)
   }
 
   // More info button
-  $(`#button${data.match.gameId}`).click(() => {
-    console.log(data.match.gameId)
+  $(`#button${data.gameId}`).click(() => {
+    console.log(data.gameId)
   })
 })
