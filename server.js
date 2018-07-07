@@ -27,9 +27,10 @@ io.on('connection', socket => {
     })
   });
   // Match search
-  socket.on('match', id => {
+  socket.on('match', data => {
     let results = {};
-    api.Match.gettingById(id).then(data => {
+    results.champion = data.champion;
+    api.Match.gettingById(data.id).then(data => {
       results.match = data
       socket.emit('match', results)
     })

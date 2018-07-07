@@ -10,3 +10,64 @@ button.info {
   max-width: 150px;
   max-height: 150px;
 }
+.match {
+  width: 80%;
+  height: 130px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+}
+.championIcon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+.match1{ 
+  width: 100px;
+  padding-left: 5px;
+  display: inline-block;
+  padding-right: 10px;
+}
+.champName {
+  text-align: center;
+  margin: 5px;
+}
+.Win {
+  background: #30ff53;
+}
+.Fail {
+  background: #c90000;
+}
+.matchSummoners {
+  width: 150px;
+  height: 100%;
+  /* display: inline-block; */
+  vertical-align: top;
+  float: right;
+}
+.playerName {
+  margin: 7px;
+}
+.matchScore {
+  width: 140px;
+  display: inline-block;
+  height: 100%;
+  vertical-align: top;
+  padding-left: 20px;
+}
+.score {
+  text-align: center;
+  position: relative;
+  top: 15px;
+  font-size: 30px;
+}
+.matchSummonerChamps {
+  width: 30px;
+  padding-top: 6px;
+  float: right;
+}
+.playerChamp {
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  display: inline-block;
+}
