@@ -10,7 +10,7 @@ $('document').ready(() => {
   main = $('#main')
 });
 socket.on('mongoose', data => {
-  console.log("Connected to " + data);
+  console.log("Connected to " + data.err);
 });
 socket.on('static', data => {
   champions = data.champions.data
