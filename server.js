@@ -2,7 +2,8 @@ const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-const champions = require('./champions.json')
+const champions = require('./src/champions.json')
+const summonerSpells = require('./src/summonerSpells.json')
 const PORT = process.env.PORT || 3000;
 const League = require('leaguejs')
 process.env.LEAGUE_API_KEY = "RGAPI-30a650bc-20a5-4619-8cb4-cccddf0c906b"
@@ -15,7 +16,7 @@ server.listen(PORT, () => {
 io.on('connection', socket => {
   console.log("user connected")
   // Summoner Search
-  socket.emit('champions',champions)
+  socket.emit('static', {champions, summonerSpells})
   socket.on('summoner', summoner => {
     let results = {};
     api.Summoner.gettingByName(summoner).then(data => {

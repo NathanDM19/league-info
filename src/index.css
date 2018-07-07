@@ -6,30 +6,54 @@ body {
 button.info {
   float: right;
 }
+#summonerInfo {
+  margin-top: 20px;
+}
+#summonerIconDiv {
+  display: inline-block;
+  width: 160px;
+}
+#summonerInfoDiv {
+  width: 200px;
+  vertical-align: top;
+  display: inline-block;
+}
+#username {
+  font-size: 40px;
+  margin-top: 15px;
+  margin-bottom: 0;
+}
 #summonerIcon {
   max-width: 150px;
   max-height: 150px;
+  border: 1px solid black;
+}
+#matchHistoryText {
+  text-align: center;
+  font-size: 30px;
+  margin: 0;
 }
 .match {
   width: 80%;
   height: 130px;
   border: 1px solid black;
+  margin: 0 auto;
   margin-bottom: 10px;
+  border-radius: 20px;  
 }
 .championIcon {
   width: 100px;
   height: 100px;
   border-radius: 50%;
+  margin: 15px;
 }
 .match1{ 
-  width: 100px;
-  padding-left: 5px;
+  width: 135px;
   display: inline-block;
-  padding-right: 10px;
 }
-.champName {
+.championName {
   text-align: center;
-  margin: 5px;
+  margin-bottom: 0;
 }
 .Win {
   background: #30ff53;
@@ -40,7 +64,6 @@ button.info {
 .matchSummoners {
   width: 150px;
   height: 100%;
-  /* display: inline-block; */
   vertical-align: top;
   float: right;
 }
@@ -48,17 +71,18 @@ button.info {
   margin: 7px;
 }
 .matchScore {
-  width: 140px;
+  width: 160px;
   display: inline-block;
   height: 100%;
   vertical-align: top;
-  padding-left: 20px;
+  margin-left: 30px;
 }
 .score {
   text-align: center;
   position: relative;
-  top: 15px;
   font-size: 30px;
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 .matchSummonerChamps {
   width: 30px;
@@ -70,4 +94,43 @@ button.info {
   height: 21px;
   border-radius: 50%;
   display: inline-block;
+}
+.kda {
+  text-align: center;
+  margin: 0;
+}
+.summonerSpells {
+  display: inline-block;
+  height: 100%;
+  width: 30px;
+  vertical-align: top;
+  padding-top: 30px;
+}
+.summonerSpell {
+  height: 30px;
+  width: 30px;
+  text-align: center;
+  margin-bottom: 5px;
+  border: 1px solid black;
+}
+.matchItems {
+  display: inline-block;
+  width: 116px;
+  margin-left: 30px;
+  vertical-align: top;
+  padding-top: 35px;
+}
+.item {
+  width: 30px;
+  height: 30px;
+  border-radius: 15%;
+  margin-right: 5px;
+  border: 1px solid black;
+}
+.matchTrinket {
+  display: inline-block;
+  width: 32px;
+  vertical-align: top;
+  padding-top: 54px;
+  margin-left: -10px;
 }
