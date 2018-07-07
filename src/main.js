@@ -82,7 +82,7 @@ socket.on('match', data => {
         break;
       }
     }
-    $(`#${data.match.gameId}ChampsLeft`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/${champion}.png">`)
+    $(`#${data.match.gameId}ChampsLeft`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/champion/${champion}.png">`)
   }
   for (let i = 0; i < summonerNames[2].length; i++) {
     $(`#${data.match.gameId}summonersRight`).append(`<p class="playerName">${summonerNames[2][i]}</p>`)
@@ -93,7 +93,7 @@ socket.on('match', data => {
         break;
       }
     }
-    $(`#${data.match.gameId}ChampsRight`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/${champion}.png">`)
+    $(`#${data.match.gameId}ChampsRight`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/champion/${champion}.png">`)
   }
   $(`#button${data.match.gameId}`).click(() => {
     console.log(data.match.gameId)
