@@ -19,7 +19,7 @@ mongoose.connect(uristring, function (err, res) {
   } else {
     console.log ('Succeeded connected to: ' + uristring);
     setInterval(function() {
-      socket.emit('mongoose', uristring)
+      io.emit('mongoose', uristring)
     }, 2000)
   }
 });

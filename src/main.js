@@ -1,5 +1,5 @@
-// const socket = io.connect("http://localhost:3000");
-const socket = io.connect(window.location.hostname);
+const socket = io.connect("http://localhost:3000");
+// const socket = io.connect(window.location.hostname);
 
 let champions, main, userId, summonerSpells;
 let searchTotal = 20;
@@ -8,10 +8,10 @@ $('document').ready(() => {
     socket.emit('summoner', $('#query').val());
   });
   main = $('#main')
-})
-socket.on('mongoose', data) => {
+});
+socket.on('mongoose', data => {
   console.log("Connected to " + data);
-}
+});
 socket.on('static', data => {
   champions = data.champions.data
   summonerSpells = data.summonerSpells.data
