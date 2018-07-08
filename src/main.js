@@ -1,7 +1,7 @@
 // const socket = io.connect("http://localhost:3000");
 const socket = io.connect(window.location.hostname);
 
-let champions, main, userId, summonerSpells, username;
+let champions, main, userId, summonerSpells, username, gameModes;
 let searchTotal = 20;
 $('document').ready(() => {
   username = window.location.pathname.slice(8)
@@ -10,6 +10,7 @@ $('document').ready(() => {
 socket.on('static', data => {
   champions = data.champions.data
   summonerSpells = data.summonerSpells.data
+  gameModes = data.gameModes
   socket.emit('summoner', username)
 })
 socket.on('result', data => {
@@ -30,16 +31,18 @@ socket.on('result', data => {
     <p id="matchHistoryText">Match History</p>
     <br><hr>
   </div>`)
-  for (let i = searchTotal - 20; i < searchTotal; i++) {
-    let match = data.matchHistory.matches[i]
-    let champion;
-    for (key in champions) {
-      if (champions[key].key == match.champion) {
-        champion = champions[key].id;
-        break;
+  if (!data.db) {
+    for (let i = searchTotal - 20; i < searchTotal; i++) {
+      let match = data.matchHistory.matches[i]
+      let champion;
+      for (key in champions) {
+        if (champions[key].key == match.champion) {
+          champion = champions[key].id;
+          break;
+        }
       }
+      socket.emit('match', { id: match.gameId, champion, username, count: i });
     }
-    socket.emit('match', { id: match.gameId, champion, username, count: i });
   }
 })
 
@@ -103,6 +106,8 @@ socket.on('match', data => {
     </div>
     <div class="matchTrinket">
       <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/${userInfo.stats.item6}.png">
+    </div>
+    <div class="matchExtra">
     </div>
     <div id="${data.gameId}summonersLeft" class="matchSummoners"></div>
     <div id="${data.gameId}ChampsLeft" class="matchSummonerChamps"></div>
@@ -207,6 +212,12 @@ socket.on('allMatch', data => {
       </div>
       <div class="matchTrinket">
         <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/${userInfo.stats.item6}.png">
+      </div>
+      <div class="matchExtra">
+        <p class="extraText gameMode">${gameModes[data[i].results.queueId]}</p>
+        <p class="extraText gameLength">${Math.floor(data[i].results.gameDuration / 60)}m ${data[i].results.gameDuration % 60}s</p>
+        <p class="extraText gameLevel">Level ${userInfo.stats.champLevel}</p>
+        <p class="extraText damageDealt">Damage Dealt: ${userInfo.stats.totalDamageDealtToChampions}</p>
       </div>
       <div id="${data[i].results.gameId}summonersLeft" class="matchSummoners"></div>
       <div id="${data[i].results.gameId}ChampsLeft" class="matchSummonerChamps"></div>

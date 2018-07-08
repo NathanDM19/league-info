@@ -4,6 +4,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const champions = require('./src/champions.json')
 const summonerSpells = require('./src/summonerSpells.json')
+const gameModes = require('./src/gameModes.json')
 const PORT = process.env.PORT || 3000;
 const League = require('leaguejs')
 process.env.LEAGUE_API_KEY = "RGAPI-710c1a8d-602a-46bd-92c4-18d1a9c27f9a"
@@ -45,7 +46,7 @@ io.on('connection', socket => {
   console.log("user connected")
   // Summoner Search
 
-  socket.emit('static', {champions, summonerSpells})
+  socket.emit('static', {champions, summonerSpells, gameModes})
   socket.on('summoner', summoner => {
     let results = {};
     if (userDB) {
@@ -53,7 +54,9 @@ io.on('connection', socket => {
         .find({ username: summoner.toLowerCase() })
         .toArray((err, res) => {
           if (res[0]) {
+            res[0].db = true;
             socket.emit('result', res[0])
+            socket.emit('allMatch', res[0].matches)
           } else {
             console.log("Running API search")
             api.Summoner.gettingByName(summoner).then(data => {
@@ -90,13 +93,8 @@ io.on('connection', socket => {
         .find({ username: data.username.toLowerCase() })
         .toArray((err, res) => {
           // console.log(res)
-          if (res) {
-            if (res[0].matches.length >= 20) {
-              // console.log(res[0].matches[count])
-              if (count === 0) {
-                socket.emit('allMatch', res[0].matches)
-              }
-            } else {
+          if (res[0]) {
+            if (res[0].matches.length < 20) {
               api.Match.gettingById(data.id).then(data => {
                 results = data;
                 results.champion = champion;
