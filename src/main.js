@@ -1,5 +1,5 @@
-const socket = io.connect("http://localhost:3000");
-// const socket = io.connect(window.location.hostname);
+// const socket = io.connect("http://localhost:3000");
+const socket = io.connect(window.location.hostname);
 
 let champions, main, userId, summonerSpells, username;
 let searchTotal = 20;
