@@ -30,6 +30,7 @@ app.use(express.static('src'));
 // ROUTES
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/src/index.html")
+  console.log("ROOT")
 });
 app.get("/search/:name", (req, res) => {
   res.sendFile(__dirname + "/src/users.html")
