@@ -7,7 +7,7 @@ const summonerSpells = require('./src/summonerSpells.json')
 const gameModes = require('./src/gameModes.json')
 const PORT = process.env.PORT || 3000;
 const League = require('leaguejs')
-process.env.LEAGUE_API_KEY = "RGAPI-710c1a8d-602a-46bd-92c4-18d1a9c27f9a"
+process.env.LEAGUE_API_KEY = "RGAPI-ec21864f-27a8-42e2-98fd-7261fb08bd19"
 const api = new League(process.env.LEAGUE_API_KEY, { PLATFORM_ID: "oc1" })
 //https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/Cre?api_key=RGAPI-30a650bc-20a5-4619-8cb4-cccddf0c906b
 
