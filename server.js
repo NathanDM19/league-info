@@ -2,12 +2,13 @@ const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+const ta = require('./node_modules/time-ago/timeago.js')
 const champions = require('./src/champions.json')
 const summonerSpells = require('./src/summonerSpells.json')
 const gameModes = require('./src/gameModes.json')
 const PORT = process.env.PORT || 3000;
 const League = require('leaguejs')
-process.env.LEAGUE_API_KEY = "RGAPI-ec21864f-27a8-42e2-98fd-7261fb08bd19"
+process.env.LEAGUE_API_KEY = "RGAPI-8c6f356f-ac18-4cce-920f-056835e86b4d"
 const api = new League(process.env.LEAGUE_API_KEY, { PLATFORM_ID: "oc1" })
 //https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/Cre?api_key=RGAPI-30a650bc-20a5-4619-8cb4-cccddf0c906b
 
@@ -55,6 +56,7 @@ io.on('connection', socket => {
         .toArray((err, res) => {
           if (res[0]) {
             res[0].db = true;
+            res[0].update = ta.ago(res[0].date)
             socket.emit('result', res[0])
             socket.emit('allMatch', res[0].matches)
           } else {
@@ -67,22 +69,23 @@ io.on('connection', socket => {
                   "username": summoner.toLowerCase(),
                   "summoner": results.summoner,
                   "matchHistory": { "matches": data.matches },
-                  "matches": []
+                  "matches": [],
+                  "date": new Date()
                 })
                 socket.emit('result', results)
               })
+                .catch(err => {
+                  console.log("2nd Error:", err)
+                })
+            })
+              .catch(err => {
+              console.log("Error:",err)
             })
           }
         })
     }
   })
-    // api.Summoner.gettingByName(summoner).then(data => {
-    //   results.summoner = data
-    //   api.Match.gettingListByAccount(data.accountId).then(data => {
-    //     results.matchHistory = data
-    //     socket.emit('result', results)
-    //   })
-    // })
+
   // Match search
   socket.on('match', data => {
     let results = {};
@@ -92,7 +95,6 @@ io.on('connection', socket => {
       userDB
         .find({ username: data.username.toLowerCase() })
         .toArray((err, res) => {
-          // console.log(res)
           if (res[0]) {
             if (res[0].matches.length < 20) {
               api.Match.gettingById(data.id).then(data => {
@@ -102,16 +104,18 @@ io.on('connection', socket => {
                   { _id: res[0]._id },
                   { $push: { "matches": { results } } }
                 )
-                socket.emit('match', results)
+                socket.emit('allMatch', [{ results }])
               })
             }
           }
         })
     }
-    // api.Match.gettingById(data.id).then(data => {
-    //   results = data;
-    //   results.champion = champion;
-    //   socket.emit('match', results)
-    // })
+  })
+
+  // New Search
+  socket.on('clear', username => {
+    userDB.remove(
+      { username: username.toLowerCase() }
+    )
   })
 });
