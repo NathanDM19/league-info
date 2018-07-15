@@ -7,16 +7,20 @@ const tstd = require('./node_modules/timestamp-to-date/lib/index.js')
 const champions = require('./src/champions.json')
 const summonerSpells = require('./src/summonerSpells.json')
 const gameModes = require('./src/gameModes.json')
+const keys = require('./src/keys.json')
 const PORT = process.env.PORT || 3000;
 const League = require('leaguejs')
-process.env.LEAGUE_API_KEY = ""
-const api = new League(process.env.LEAGUE_API_KEY, { PLATFORM_ID: "oc1" })
+process.env.LEAGUE_API_KEY = keys.riot
+const api = new League(process.env.LEAGUE_API_KEY, {
+  PLATFORM_ID: "oc1",
+  limits: { allowBursts: true }
+})
 //https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/Cre?api_key=RGAPI-30a650bc-20a5-4619-8cb4-cccddf0c906b
 
 // Mongoose
 const mongodb = require('mongodb');
 // const uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/HelloMongoose';
-const uristring = ""
+const uristring = keys.mongo
 let db, userDB;
 mongodb.MongoClient.connect(uristring, function (err, client) {
   if (err) {
@@ -47,7 +51,8 @@ server.listen(PORT, () => {
 io.on('connection', socket => {
   console.log("user connected")
   // Summoner Search
-
+  let userDBinfo = {};
+  let totalMatches = 0;
   socket.emit('static', {champions, summonerSpells, gameModes})
   socket.on('summoner', summoner => {
     let results = {};
@@ -71,15 +76,15 @@ io.on('connection', socket => {
                 results.queues = data
                 api.Match.gettingListByAccount(results.summoner.accountId).then(data => {
                   results.matchHistory = data;
-                  userDB.insert({
+                  results.update = "a few seconds ago"
+                  userDBinfo = {
                     "username": summoner.toLowerCase(),
                     "summoner": results.summoner,
                     "matchHistory": { "matches": data.matches },
                     "matches": [],
                     "date": new Date(),
                     "queues": results.queues
-                  })
-                  results.update = "a few seconds ago"
+                  }
                   socket.emit('result', results)
                 })
                   .catch(err => {
@@ -100,30 +105,32 @@ io.on('connection', socket => {
     let results = {};
     let champion = data.champion;
     let count = data.count;
-    if (userDB) {
-      userDB
-        .find({ username: data.username.toLowerCase() })
-        .toArray((err, res) => {
-          if (res[0]) {
-            if (res[0].matches.length < 20) {
-              api.Match.gettingById(data.id).then(data => {
-                results = data;
-                results.champion = champion;
-                userDB.update(
-                  { _id: res[0]._id },
-                  { $push: { "matches": { results } } }
-                )
-                results.ago = ta.ago(tstd(results.gameCreation, 'yyyy-MM-dd HH:mm:ss'))
-                socket.emit('allMatch', [{ results }])
-              })
-            }
-          }
-        })
-    }
+    let searchTotal = data.searchTotal;
+    api.Match.gettingById(data.id).then(data => {
+      results = data;
+      results.champion = champion;
+      results.ago = ta.ago(tstd(results.gameCreation, 'yyyy-MM-dd HH:mm:ss'))
+      userDBinfo.matches.push({ results })
+      totalMatches++;
+      if (totalMatches === searchTotal - 1) {
+          userDB.insert({
+            "username": userDBinfo.username,
+            "summoner": userDBinfo.summoner,
+            "matchHistory": userDBinfo.matchHistory,
+            "matches": userDBinfo.matches,
+            "date": userDBinfo.date,
+            "queues": userDBinfo.queues
+          })
+        socket.emit('allMatch', userDBinfo.matches)
+        }
+    })
   })
-
+  socket.on('allMatch', data => {
+    socket.emit('allMatch', data)
+  });
   // New Search
   socket.on('clear', username => {
+    totalMatches = 0;
     userDB.remove(
       { username: username.toLowerCase() }
     )

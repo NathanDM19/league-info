@@ -1,6 +1,7 @@
 const socket = io.connect(window.location.host);
 
 let champions, main, userId, summonerSpells, username, gameModes;
+let matches = [];
 let searchTotal = 20;
 $('document').ready(() => {
   username = window.location.pathname.slice(8)
@@ -97,11 +98,25 @@ socket.on('result', data => {
           break;
         }
       }
-      socket.emit('match', { id: match.gameId, champion, username, count: i });
+      socket.emit('match', { id: match.gameId, champion, username, count: i, searchTotal });
     }
   }
 })
+socket.on('singleMatch', data => {
+  matches.push(data[0]);
+  if (matches.length === 20) { 
+    socket.emit('allMatch', matches);
+  }
+})
 socket.on('allMatch', data => {
+  function compare(a, b) {
+    if (a.results.gameCreation < b.results.gameCreation)
+      return -1;
+    if (a.results.gameCreation > b.results.gameCreation)
+      return 1;
+    return 0;
+  }
+  data.sort(compare).reverse();
   for (let i = 0; i < data.length; i++) {
     console.log(data[i].results)
     let win, userInfo;
@@ -230,6 +245,7 @@ socket.on('allMatch', data => {
     })
   }
   $('#update').click(function () {
+    matches = [];
     socket.emit('clear', username);
     socket.emit('summoner', username);
   })
