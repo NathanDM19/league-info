@@ -7,10 +7,10 @@ const tstd = require('./node_modules/timestamp-to-date/lib/index.js')
 const champions = require('./src/champions.json')
 const summonerSpells = require('./src/summonerSpells.json')
 const gameModes = require('./src/gameModes.json')
-const keys = require('./src/keys.json')
+// const keys = require('./src/keys.json')
 const PORT = process.env.PORT || 3000;
 const League = require('leaguejs')
-process.env.LEAGUE_API_KEY = keys.riot
+process.env.LEAGUE_API_KEY = "RGAPI-459f3841-8a28-421e-955d-fa2085911d53";
 const api = new League(process.env.LEAGUE_API_KEY, {
   PLATFORM_ID: "oc1",
   limits: { allowBursts: true }
@@ -20,7 +20,7 @@ const api = new League(process.env.LEAGUE_API_KEY, {
 // Mongoose
 const mongodb = require('mongodb');
 // const uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/HelloMongoose';
-const uristring = keys.mongo
+const uristring = "mongodb://nathan:annegeddes1@ds131551.mlab.com:31551/heroku_nv706h5q"
 let db, userDB;
 mongodb.MongoClient.connect(uristring, function (err, client) {
   if (err) {
