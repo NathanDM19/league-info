@@ -1,6 +1,6 @@
 League Info is a website which show stats and information about players in League of Legends. You can search by a summoner name to find out information about them including their level, their rank, their ranked information and their match history.
 
-http://league-info.herokuapp.com
+http://league-info.herokuapp.com/search/test
 
 # Change Log
 
