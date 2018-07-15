@@ -16,7 +16,8 @@
     "react-scripts": "1.1.4",
     "riot-api-nodejs": "^2.1.0",
     "socket.io": "^2.1.1",
-    "time-ago": "^0.2.1"
+    "time-ago": "^0.2.1",
+    "timestamp-to-date": "^1.1.0"
   },
   "scripts": {
     "start": "nodemon server.js",

@@ -6,8 +6,20 @@ body {
 button.info {
   float: right;
 }
+
+/* NAVBAR */
+.navbar {
+  padding: 5px 8.5%;
+}
+#searchSummoner {
+  float: right;
+}
+
+
+/* SUMMONER INFO */
 #summonerInfo {
-  margin-top: 20px;
+  margin: 0 8.5%;
+  margin-top: 30px;
 }
 #summonerIconDiv {
   display: inline-block;
@@ -28,10 +40,42 @@ button.info {
   max-height: 150px;
   border: 1px solid black;
 }
+#rankedInfoDiv {
+  width: 312px;
+  height: 100%;
+  float: right;
+  /* border: 1px solid lightgrey; */
+}
+#rankedImage {
+  width: 150px;
+  height: 150px;
+  display: inline-block;
+}
+#rankedText {
+  width: 155px;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  padding-top: 15px;
+}
+.rankedText {
+  margin: 0;
+}
+.unrankedText {
+  margin-top: 48px;
+}
+
+/* MATCH HISTORY */
+#matchHistory {
+  margin: 0 8.5%;
+  margin-top: -112px;
+}
 #matchHistoryText {
   text-align: center;
   font-size: 30px;
   margin: 0;
+  position: relative;
+  top: 30px;
 }
 .match {
   width: 1200px;
@@ -40,8 +84,6 @@ button.info {
   margin: 0 auto;
   margin-bottom: 10px;
   border-radius: 20px;  
-  float: right;
-  margin-right: 25px;
 }
 .championIcon {
   width: 100px;
@@ -55,7 +97,7 @@ button.info {
 }
 .championName {
   text-align: center;
-  margin-bottom: 0;
+  margin-bottom: -13px;
 }
 .Win {
   background: #30ff53;
@@ -65,19 +107,24 @@ button.info {
 }
 .matchSummoners {
   width: 150px;
-  height: 100%;
+  height: 130px;
   vertical-align: top;
   float: right;
+  margin-top: 1px;
 }
 .playerName {
-  margin: 7px;
+  margin: 1.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .matchScore {
   width: 160px;
   display: inline-block;
-  height: 100%;
+  height: 109px;
   vertical-align: top;
   margin-left: 30px;
+  margin-top: 21px;
 }
 .score {
   text-align: center;
@@ -88,12 +135,12 @@ button.info {
 }
 .matchSummonerChamps {
   width: 30px;
-  padding-top: 6px;
+  padding-top: 1px;
   float: right;
 }
 .playerChamp {
-  width: 21px;
-  height: 21px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   display: inline-block;
 }
@@ -103,7 +150,7 @@ button.info {
 }
 .summonerSpells {
   display: inline-block;
-  height: 100%;
+  height: 130px;
   width: 30px;
   vertical-align: top;
   padding-top: 30px;
@@ -120,48 +167,76 @@ button.info {
   width: 116px;
   margin-left: 30px;
   vertical-align: top;
-  padding-top: 35px;
+  padding-top: 30px;
 }
 .item {
   width: 30px;
   height: 30px;
   border-radius: 15%;
   margin-right: 5px;
+  margin-top: 5px;
   border: 1px solid black;
+  vertical-align: top;
+}
+.emptyItem {
+  width: 30px;
+  height: 30px;
+  border-radius: 15%;
+  margin-right: 5px;
+  margin-top: 5px;
+  border: 1px solid black;
+  background: lightgrey;
+  display: inline-block;
+  vertical-align: top;
 }
 .matchTrinket {
   display: inline-block;
   width: 32px;
   vertical-align: top;
-  padding-top: 54px;
-  margin-left: -10px;
+  padding-top: 48px;
+  margin-left: -13px;
 }
 .matchExtra {
-  height: 100%;
+  height: 130px;
   display: inline-block;
   vertical-align: top;
   width: 200px;
   text-align: center;
-  padding-top: 10px;
+  margin-top: -2px;
   margin-left: 25px
 }
 .extraText {
-  margin: 8px;
+  margin: 2px;
 }
 #update {
   position: relative;
-  top: 50px;
-  width: 80px;
-  height: 40px;
-  font-size: 20px;
+  top: 70px;
+  z-index: 1;
 }
 #updateTime {
   position: relative;
-  top: 50px;
+  top: 118px;
+  left: 92px;
 }
 .moreInfo {
   width: 50px;
-  height: 100%;
+  height: 130px;
   float: right;
-  border-left: 2px solid black;
+}
+.downArrow {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  top: 52px;
+  left: 5px;
+  background-image: url("https://image.flaticon.com/icons/png/512/60/60995.png");
+  background-size: cover;
+}
+.downArrow:hover {
+  cursor: pointer;
+}
+#liveGame {
+  float: right;
+  position: relative;
+  top: -12px;
 }

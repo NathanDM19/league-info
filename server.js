@@ -3,12 +3,13 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const ta = require('./node_modules/time-ago/timeago.js')
+const tstd = require('./node_modules/timestamp-to-date/lib/index.js')
 const champions = require('./src/champions.json')
 const summonerSpells = require('./src/summonerSpells.json')
 const gameModes = require('./src/gameModes.json')
 const PORT = process.env.PORT || 3000;
 const League = require('leaguejs')
-process.env.LEAGUE_API_KEY = "RGAPI-8c6f356f-ac18-4cce-920f-056835e86b4d"
+process.env.LEAGUE_API_KEY = "RGAPI-459f3841-8a28-421e-955d-fa2085911d53"
 const api = new League(process.env.LEAGUE_API_KEY, { PLATFORM_ID: "oc1" })
 //https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/Cre?api_key=RGAPI-30a650bc-20a5-4619-8cb4-cccddf0c906b
 
@@ -57,26 +58,34 @@ io.on('connection', socket => {
           if (res[0]) {
             res[0].db = true;
             res[0].update = ta.ago(res[0].date)
+            for (let i = 0; i < res[0].matches.length; i++) {
+              res[0].matches[i].results.ago = ta.ago(tstd(res[0].matches[i].results.gameCreation, 'yyyy-MM-dd HH:mm:ss'))
+            }
             socket.emit('result', res[0])
             socket.emit('allMatch', res[0].matches)
           } else {
             console.log("Running API search")
             api.Summoner.gettingByName(summoner).then(data => {
               results.summoner = data
-              api.Match.gettingListByAccount(data.accountId).then(data => {
-                results.matchHistory = data;
-                userDB.insert({
-                  "username": summoner.toLowerCase(),
-                  "summoner": results.summoner,
-                  "matchHistory": { "matches": data.matches },
-                  "matches": [],
-                  "date": new Date()
+              api.League.gettingPositionsForSummonerId(results.summoner.id).then(data => {
+                results.queues = data
+                api.Match.gettingListByAccount(results.summoner.accountId).then(data => {
+                  results.matchHistory = data;
+                  userDB.insert({
+                    "username": summoner.toLowerCase(),
+                    "summoner": results.summoner,
+                    "matchHistory": { "matches": data.matches },
+                    "matches": [],
+                    "date": new Date(),
+                    "queues": results.queues
+                  })
+                  results.update = "a few seconds ago"
+                  socket.emit('result', results)
                 })
-                socket.emit('result', results)
+                  .catch(err => {
+                    console.log("2nd Error:", err)
+                  })
               })
-                .catch(err => {
-                  console.log("2nd Error:", err)
-                })
             })
               .catch(err => {
               console.log("Error:",err)
@@ -104,6 +113,7 @@ io.on('connection', socket => {
                   { _id: res[0]._id },
                   { $push: { "matches": { results } } }
                 )
+                results.ago = ta.ago(tstd(results.gameCreation, 'yyyy-MM-dd HH:mm:ss'))
                 socket.emit('allMatch', [{ results }])
               })
             }

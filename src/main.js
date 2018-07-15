@@ -1,5 +1,4 @@
-const socket = io.connect("http://localhost:3000");
-// const socket = io.connect(window.location.hostname);
+const socket = io.connect(window.location.host);
 
 let champions, main, userId, summonerSpells, username, gameModes;
 let searchTotal = 20;
@@ -7,6 +6,10 @@ $('document').ready(() => {
   username = window.location.pathname.slice(8)
   username = username.replace("%20", " ");
   main = $('#main')
+  $('#searchButton').click(function (ev) {
+    ev.preventDefault();
+    window.location.replace(`${window.location.origin}/search/${$('#query').val()}`);
+  })
 });
 socket.on('static', data => {
   champions = data.champions.data
@@ -27,14 +30,63 @@ socket.on('result', data => {
       <p id="username">${data.summoner.name}</p>
       <p id="level">Level: ${data.summoner.summonerLevel}</p>
     </div>
+    <div id="rankedInfoDiv">
+    </div>
     <br><br>
+    <hr>
   </div>
   <div id="matchHistory">
-    <p id="updateTime">Updated ${data.update}</p>
-    <button id="update">Update</button>
+    <p id="updateTime">Last updated ${data.update}</p>
+    <button type="button" class="btn btn-primary" id="update">Update</button>
     <p id="matchHistoryText">Match History</p>
+    <button type="button" class="btn btn-primary" id="liveGame">Live Game</button>
     <br><hr>
   </div>`)
+  let ranked = false;
+  for (let i = 0; i < data.queues.length; i++) {
+    let queue = data.queues[i];
+    let rank;
+    switch (queue.rank) {
+      case "I":
+        rank = 1
+        break;
+      case "II":
+        rank = 2;
+        break;
+      case "III":
+        rank = 3;
+        break;
+      case "IV":
+        rank = 4;
+        break;
+      case "V":
+        rank = 5;
+        break;
+    }
+    if (queue.queueType === "RANKED_SOLO_5x5") {
+      ranked = true;
+      $('#rankedInfoDiv').append(`
+      <img id="rankedImage" src="http://opgg-static.akamaized.net/images/medals/${queue.tier.toLowerCase()}_${rank}.png">
+      <div id="rankedText">
+      <p class="rankedText">${queue.tier[0] + queue.tier.slice(1).toLowerCase()} ${rank}</p>
+      <p class="rankedText">${queue.leaguePoints} LP</p>
+      <p class="rankedText">${queue.wins}W / ${queue.losses}L</p>
+      <p class="rankedText">${Math.round(queue.wins / (queue.wins + queue.losses) * 100)}% Win Ratio</p>
+      <p class="rankedText">${queue.leagueName}</p>
+      </div>
+      `)
+      // console.log(``)
+      console.log("RAN")
+    }
+  }
+  if (!ranked) {
+    $('#rankedInfoDiv').append(`
+      <img id="rankedImage" src="http://opgg-static.akamaized.net/images/medals/default.png">
+      <div id="rankedText">
+      <p class="unrankedText">Unranked</p>
+      </div>
+      `)
+  }
   if (!data.db) {
     for (let i = searchTotal - 20; i < searchTotal; i++) {
       let match = data.matchHistory.matches[i]
@@ -55,6 +107,8 @@ socket.on('allMatch', data => {
     let win, userInfo;
     let summonerNames = { 1: [], 2: [] };
     let summonerInfo = { 1: [], 2: [] };
+    let items = 0;
+    let extraInfo = false;
     // Win / loss Check
     for (let j = 0; j < data[i].results.participantIdentities.length; j++) {
       let user = data[i].results.participantIdentities[j]
@@ -115,9 +169,10 @@ socket.on('allMatch', data => {
         <p class="extraText gameLength">${Math.floor(data[i].results.gameDuration / 60)}m ${data[i].results.gameDuration % 60}s</p>
         <p class="extraText gameLevel">Level ${userInfo.stats.champLevel}</p>
         <p class="extraText damageDealt">Damage Dealt: ${userInfo.stats.totalDamageDealtToChampions}</p>
+        <p class="extraText sinceGame">${data[i].results.ago}</p>
       </div>
-      <div id="${data[i].results.gameId}moreInfo" class="moreInfo">
-        Down arrow goes here
+      <div class="moreInfo">
+        <div id="${data[i].results.gameId}moreInfo" class="downArrow"></div>
       </div> 
       <div id="${data[i].results.gameId}summonersLeft" class="matchSummoners"></div>
       <div id="${data[i].results.gameId}ChampsLeft" class="matchSummonerChamps"></div>
@@ -129,7 +184,11 @@ socket.on('allMatch', data => {
       if (userInfo.stats[`item${j}`] != 0) {
         let itemId = userInfo.stats[`item${j}`];
         $(`#${data[i].results.gameId}Items`).append(`<img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/${itemId}.png">`)
+        items++;
       }
+    }
+    for (let j = 6; j > items; j--) {
+      $(`#${data[i].results.gameId}Items`).append(`<div class="emptyItem"></div>`)
     }
     // Team 1 players
     for (let j = 0; j < summonerNames[1].length; j++) {
@@ -158,8 +217,16 @@ socket.on('allMatch', data => {
     }
 
     // More info button
-    $(`#button${data[i].results.gameId}`).click(() => {
+    $(`#${data[i].results.gameId}moreInfo`).click(() => {
       console.log(data[i].results.gameId)
+      if (!extraInfo) {
+        $(`#${data[i].results.gameId}`).css({ height: '500px' })
+        $(`#${data[i].results.gameId}moreInfo`).css({transform: "rotate(180deg)"})
+      } else {
+        $(`#${data[i].results.gameId}`).css({ height: '130px' })
+        $(`#${data[i].results.gameId}moreInfo`).css({ transform: "rotate(0deg)" })
+      }
+      extraInfo = !extraInfo;
     })
   }
   $('#update').click(function () {
