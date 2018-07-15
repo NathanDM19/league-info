@@ -9,7 +9,6 @@ http://league-info.herokuapp.com
 - Shows how long ago the last update was done. 
 - UI Update.
 - Ranked information for summoner, such as rank, tier, LP and rank name.
-- Live game button added, currently does nothing.
 - Updated match history to now always show in order of play date.
 - Search bar at top of screen now rather than only on home page.
 - Grey slots for no items.
@@ -23,7 +22,7 @@ http://league-info.herokuapp.com
 - Match history now also shows extra information such as queue type, match length and total damage to champions.
 
 12/07/18
-- Match history now also shows items purchased by player and trinket
+- Match history now also shows items purchased by player and trinket.
 
 11/07/18
 - Match history now also shows more information, including Win / Loss colours and other summoners in the game.
