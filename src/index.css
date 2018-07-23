@@ -14,7 +14,9 @@ button.info {
 #searchSummoner {
   float: right;
 }
-
+#searchSummoner a {
+  margin-left: 20px;
+}
 
 /* SUMMONER INFO */
 #summonerInfo {
@@ -123,8 +125,8 @@ button.info {
   display: inline-block;
   height: 109px;
   vertical-align: top;
-  margin-left: 30px;
   margin-top: 21px;
+  margin-left: 15px;
 }
 .score {
   text-align: center;
@@ -162,10 +164,23 @@ button.info {
   margin-bottom: 5px;
   border: 1px solid black;
 }
+.runes {
+  display: inline-block;
+  height: 130px;
+  width: 30px;
+  vertical-align: top;
+  padding-top: 30px;
+}
+.rune {
+  height: 30px;
+  width: 30px;
+  text-align: center;
+  margin-bottom: 5px;
+}
 .matchItems {
   display: inline-block;
   width: 116px;
-  margin-left: 30px;
+  margin-left: 20px;
   vertical-align: top;
   padding-top: 30px;
 }
@@ -203,7 +218,7 @@ button.info {
   width: 200px;
   text-align: center;
   margin-top: -2px;
-  margin-left: 25px
+  margin-left: 10px
 }
 .extraText {
   margin: 2px;
@@ -239,4 +254,112 @@ button.info {
   float: right;
   position: relative;
   top: -12px;
+}
+
+/* EXTENDED MATCH HISTORY */
+.belowDiv {
+  display: none;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  background: lightblue;
+}
+.blueTeam, .redTeam {
+  height: 40px;
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
+  margin-bottom: 2px;
+}
+.teamName {
+  width: 200px;
+  font-size: 27px;
+  text-align: center;
+  display: inline-block;
+}
+.itemsName {
+  width: 400px;
+  font-size: 27px;
+  text-align: center;
+  display: inline-block;
+  padding-left: 36px;
+}
+.kdaName, .damageName, .goldName, .tierName {
+  width: 140px;
+  font-size: 27px;
+  text-align: center;
+  display: inline-block;
+}
+.player {
+  height: 40px;
+  border-bottom: 1px solid grey;
+}
+.playerChampion {
+  width: 40px;
+  display: inline-block;
+  vertical-align: top;
+}
+.playerChampionIcon {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-left: 5px;
+}
+.playerSpells {
+  width: 18px;
+  display: inline-block;
+  vertical-align: top;
+}
+.playerSpell {
+  width: 17px;
+  height: 17px;
+  margin-top: -7px;
+}
+.playerSpell2 {
+  margin-top: -19px;
+}
+.playerRunes {
+  width: 18px;
+  display: inline-block;
+  vertical-align: top;
+}
+.playerRune {
+  width: 17px;
+  height: 17px;
+  margin-top: -7px;
+}
+.playerRune2 {
+  margin-top: -19px;
+}
+.playerUsername {
+  font-size: 16px;
+  width: 175px;
+  display: inline-block;
+  line-height: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.playerItems {
+  width: 305px;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 31px;
+}
+.playerKDA {
+  width: 140px;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+}
+.margin0 {
+  margin: 0
+}
+.playerScore {
+  margin-top: -5px;
+}
+.playerGold, .playerDamage {
+  width: 140px;
+  display: inline-block;
+  vertical-align: top;
+  line-height: 40px;
+  text-align: center;
 }

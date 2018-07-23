@@ -7,6 +7,7 @@ const tstd = require('./node_modules/timestamp-to-date/lib/index.js')
 const champions = require('./src/champions.json')
 const summonerSpells = require('./src/summonerSpells.json')
 const gameModes = require('./src/gameModes.json')
+const runesReforged = require('./src/runesReforged.json')
 const keys = require('./src/keys.json')
 const PORT = process.env.PORT || 3000;
 const League = require('leaguejs')
@@ -26,7 +27,7 @@ mongodb.MongoClient.connect(uristring, function (err, client) {
   if (err) {
     console.log ('ERROR connecting to: ' + uristring + '. ' + err);
   } else {
-    console.log ('Succeeded connected to: ' + uristring);
+    console.log ('Connected to database!');
     db = client.db('heroku_nv706h5q')
     userDB = db.collection('userDB')
   }
@@ -52,8 +53,9 @@ io.on('connection', socket => {
   console.log("user connected")
   // Summoner Search
   let userDBinfo = {};
+  let userMatches = [];
   let totalMatches = 0;
-  socket.emit('static', {champions, summonerSpells, gameModes})
+  socket.emit('static', {champions, summonerSpells, gameModes, runesReforged})
   socket.on('summoner', summoner => {
     let results = {};
     if (userDB) {
@@ -64,9 +66,10 @@ io.on('connection', socket => {
             res[0].db = true;
             res[0].update = ta.ago(res[0].date)
             for (let i = 0; i < res[0].matches.length; i++) {
-              res[0].matches[i].results.ago = ta.ago(tstd(res[0].matches[i].results.gameCreation, 'yyyy-MM-dd HH:mm:ss'))
+              res[0].matches[i].results.ago = ta.ago(tstd((res[0].matches[i].results.gameCreation + (res[0].matches[i].results.gameDuration * 1000)), 'yyyy-MM-dd HH:mm:ss'))
             }
             socket.emit('result', res[0])
+            userMatches = res[0].matches;
             socket.emit('allMatch', res[0].matches)
           } else {
             console.log("Running API search")
@@ -106,31 +109,44 @@ io.on('connection', socket => {
     let champion = data.champion;
     let count = data.count;
     let searchTotal = data.searchTotal;
+    let upToDate = false;
     api.Match.gettingById(data.id).then(data => {
       results = data;
       results.champion = champion;
-      results.ago = ta.ago(tstd(results.gameCreation, 'yyyy-MM-dd HH:mm:ss'))
-      userDBinfo.matches.push({ results })
+      results.ago = ta.ago(tstd((results.gameCreation + (results.gameDuration * 1000)), 'yyyy-MM-dd HH:mm:ss'))
       totalMatches++;
+      if (userMatches.length) {
+        for (let i = 0; i < userMatches.length; i++) {
+          if (userMatches[i].results.gameId === results.gameId) {
+            break;
+          }
+          if (i === userMatches.length - 1) {
+            userMatches.push({ results });
+            break;
+          }
+        }
+      } else {
+        userMatches.push({ results });
+      }
       if (totalMatches === searchTotal - 1) {
           userDB.insert({
             "username": userDBinfo.username,
             "summoner": userDBinfo.summoner,
             "matchHistory": userDBinfo.matchHistory,
-            "matches": userDBinfo.matches,
+            "matches": userMatches,
             "date": userDBinfo.date,
             "queues": userDBinfo.queues
           })
-        socket.emit('allMatch', userDBinfo.matches)
+        for (let i = 0; i < userMatches.length; i++) {
+          userMatches[i].results.ago = ta.ago(tstd((userMatches[i].results.gameCreation + (userMatches[i].results.gameDuration) * 1000), 'yyyy-MM-dd HH:mm:ss'))
+        }
+        socket.emit('allMatch', userMatches)
         }
     })
   })
-  socket.on('allMatch', data => {
-    socket.emit('allMatch', data)
-  });
   // New Search
   socket.on('clear', username => {
-    totalMatches = 0;
+    totalMatches = 0; 
     userDB.remove(
       { username: username.toLowerCase() }
     )

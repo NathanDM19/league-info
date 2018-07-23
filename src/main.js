@@ -1,8 +1,9 @@
 const socket = io.connect(window.location.host);
 
-let champions, main, userId, summonerSpells, username, gameModes;
-let matches = [];
+let champions, main, userId, summonerSpells, username, gameModes, runesReforged;
+let matches;
 let searchTotal = 20;
+let version = "8.14.1"
 $('document').ready(() => {
   username = window.location.pathname.slice(8)
   username = username.replace("%20", " ");
@@ -16,6 +17,7 @@ socket.on('static', data => {
   champions = data.champions.data
   summonerSpells = data.summonerSpells.data
   gameModes = data.gameModes
+  runesReforged = data.runesReforged;
   socket.emit('summoner', username)
 })
 socket.on('result', data => {
@@ -25,7 +27,7 @@ socket.on('result', data => {
   main.append(`
   <div id="summonerInfo">
     <div id="summonerIconDiv">
-      <img id="summonerIcon" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/profileicon/${data.summoner.profileIconId}.png">
+      <img id="summonerIcon" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/profileicon/${data.summoner.profileIconId}.png">
     </div>
     <div id="summonerInfoDiv">
       <p id="username">${data.summoner.name}</p>
@@ -76,8 +78,6 @@ socket.on('result', data => {
       <p class="rankedText">${queue.leagueName}</p>
       </div>
       `)
-      // console.log(``)
-      console.log("RAN")
     }
   }
   if (!ranked) {
@@ -102,12 +102,6 @@ socket.on('result', data => {
     }
   }
 })
-socket.on('singleMatch', data => {
-  matches.push(data[0]);
-  if (matches.length === 20) { 
-    socket.emit('allMatch', matches);
-  }
-})
 socket.on('allMatch', data => {
   function compare(a, b) {
     if (a.results.gameCreation < b.results.gameCreation)
@@ -117,6 +111,7 @@ socket.on('allMatch', data => {
     return 0;
   }
   data.sort(compare).reverse();
+  matches = data
   for (let i = 0; i < data.length; i++) {
     console.log(data[i].results)
     let win, userInfo;
@@ -160,45 +155,66 @@ socket.on('allMatch', data => {
     // Match div
     $('#matchHistory').append(`
     <div class="match ${win}" id="${data[i].results.gameId}">
-      <div class="match1">
-        <img class="championIcon" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/champion/${data[i].results.champion}.png">
+      <div class="mainInfo">
+        <div class="match1">
+          <img class="championIcon" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${data[i].results.champion}.png">
+        </div>
+        <div class="summonerSpells">
+          <img class="summonerSpell" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${userInfo.spell1}.png">
+          <img class="summonerSpell" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${userInfo.spell2}.png">
+        </div>
+        <div class="runes" id="${data[i].results.gameId}Runes">
+        </div>
+        <div class="matchScore">
+          <p class="championName">${champions[data[i].results.champion].name}</p>
+          <p class="score">${userInfo.stats.kills} / ${userInfo.stats.deaths} / ${userInfo.stats.assists}</p>
+          <p class="kda" >
+            ${parseFloat((userInfo.stats.kills + userInfo.stats.assists) / userInfo.stats.deaths).toFixed(2)}:1 KDA
+          </p>
+        </div>
+        <div id="${data[i].results.gameId}Items" class="matchItems">
+        </div>
+        <div class="matchTrinket">
+          <img class="item" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/item/${userInfo.stats.item6}.png">
+        </div>
+        <div class="matchExtra">
+          <p class="extraText gameMode">${gameModes[data[i].results.queueId]}</p>
+          <p class="extraText gameLength">${Math.floor(data[i].results.gameDuration / 60)}m ${data[i].results.gameDuration % 60}s</p>
+          <p class="extraText gameLevel">Level ${userInfo.stats.champLevel}</p>
+          <p class="extraText damageDealt">Damage Dealt: ${userInfo.stats.totalDamageDealtToChampions.toString().slice(0, -3)},${userInfo.stats.totalDamageDealtToChampions.toString().slice(-3)}</p>
+          <p class="extraText sinceGame">${data[i].results.ago}</p>
+        </div>
+        <div class="moreInfo">
+          <div id="${data[i].results.gameId}moreInfo" class="downArrow"></div>
+        </div> 
+        <div id="${data[i].results.gameId}SummonersLeft" class="matchSummoners"></div>
+        <div id="${data[i].results.gameId}ChampsLeft" class="matchSummonerChamps"></div>
+        <div id="${data[i].results.gameId}SummonersRight" class="matchSummoners"></div>
+        <div id="${data[i].results.gameId}ChampsRight" class="matchSummonerChamps"></div>
       </div>
-      <div class="summonerSpells">
-        <img class="summonerSpell" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/spell/${userInfo.spell1}.png">
-        <img class="summonerSpell" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/spell/${userInfo.spell2}.png">
+      <div class="belowDiv" id="${data[i].results.gameId}BelowDiv">
       </div>
-      <div class="matchScore">
-        <p class="championName">${champions[data[i].results.champion].name}</p>
-        <p class="score">${userInfo.stats.kills} / ${userInfo.stats.deaths} / ${userInfo.stats.assists}</p>
-        <p class="kda" >
-          ${parseFloat((userInfo.stats.kills + userInfo.stats.assists) / userInfo.stats.deaths).toFixed(2)}:1 KDA
-        </p>
-      </div>
-      <div id="${data[i].results.gameId}Items" class="matchItems">
-      </div>
-      <div class="matchTrinket">
-        <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/${userInfo.stats.item6}.png">
-      </div>
-      <div class="matchExtra">
-        <p class="extraText gameMode">${gameModes[data[i].results.queueId]}</p>
-        <p class="extraText gameLength">${Math.floor(data[i].results.gameDuration / 60)}m ${data[i].results.gameDuration % 60}s</p>
-        <p class="extraText gameLevel">Level ${userInfo.stats.champLevel}</p>
-        <p class="extraText damageDealt">Damage Dealt: ${userInfo.stats.totalDamageDealtToChampions}</p>
-        <p class="extraText sinceGame">${data[i].results.ago}</p>
-      </div>
-      <div class="moreInfo">
-        <div id="${data[i].results.gameId}moreInfo" class="downArrow"></div>
-      </div> 
-      <div id="${data[i].results.gameId}summonersLeft" class="matchSummoners"></div>
-      <div id="${data[i].results.gameId}ChampsLeft" class="matchSummonerChamps"></div>
-      <div id="${data[i].results.gameId}summonersRight" class="matchSummoners"></div>
-      <div id="${data[i].results.gameId}ChampsRight" class="matchSummonerChamps"></div>
     </div>`)
+    // Runes
+    for (let j = 0; j < runesReforged.length; j++) {
+      for (let k = 0; k < runesReforged[j].slots[0].runes.length; k++) {
+        if (runesReforged[j].slots[0].runes[k].id == userInfo.stats.perk0) {
+          $(`#${data[i].results.gameId}Runes`).append(`<img class="rune" src="https://ddragon.leagueoflegends.com/cdn/img/${runesReforged[j].slots[0].runes[k].icon}">`);
+          break;
+        }
+      }
+    }
+    for (let j = 0; j < runesReforged.length; j++) {
+      if (runesReforged[j].id == userInfo.stats.perkSubStyle) {
+        $(`#${data[i].results.gameId}Runes`).append(`<img class="rune" src="https://ddragon.leagueoflegends.com/cdn/img/${runesReforged[j].icon}">`);
+        break;
+      } 
+    }
     // Items
     for (let j = 0; j < 6; j++) {
       if (userInfo.stats[`item${j}`] != 0) {
         let itemId = userInfo.stats[`item${j}`];
-        $(`#${data[i].results.gameId}Items`).append(`<img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/${itemId}.png">`)
+        $(`#${data[i].results.gameId}Items`).append(`<img class="item" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/item/${itemId}.png">`)
         items++;
       }
     }
@@ -207,7 +223,7 @@ socket.on('allMatch', data => {
     }
     // Team 1 players
     for (let j = 0; j < summonerNames[1].length; j++) {
-      $(`#${data[i].results.gameId}summonersLeft`).append(`<p class="playerName">${summonerNames[1][j]}</p>`)
+      $(`#${data[i].results.gameId}SummonersLeft`).append(`<p class="playerName">${summonerNames[1][j]}</p>`)
       let champion;
       for (key in champions) {
         if (champions[key].key == summonerInfo[1][j].championId) {
@@ -215,12 +231,12 @@ socket.on('allMatch', data => {
           break;
         }
       }
-      $(`#${data[i].results.gameId}ChampsLeft`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/champion/${champion}.png">`)
+      $(`#${data[i].results.gameId}ChampsLeft`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion}.png">`)
     }
 
     // Team 2 players
     for (let j = 0; j < summonerNames[2].length; j++) {
-      $(`#${data[i].results.gameId}summonersRight`).append(`<p class="playerName">${summonerNames[2][j]}</p>`)
+      $(`#${data[i].results.gameId}SummonersRight`).append(`<p class="playerName">${summonerNames[2][j]}</p>`)
       let champion;
       for (key in champions) {
         if (champions[key].key == summonerInfo[2][j].championId) {
@@ -228,24 +244,149 @@ socket.on('allMatch', data => {
           break;
         }
       }
-      $(`#${data[i].results.gameId}ChampsRight`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/champion/${champion}.png">`)
+      $(`#${data[i].results.gameId}ChampsRight`).append(`<img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion}.png">`)
     }
 
     // More info button
     $(`#${data[i].results.gameId}moreInfo`).click(() => {
       console.log(data[i].results.gameId)
       if (!extraInfo) {
-        $(`#${data[i].results.gameId}`).css({ height: '500px' })
+        $(`#${data[i].results.gameId}`).css({ height: '617px', borderRadius: '0' })
         $(`#${data[i].results.gameId}moreInfo`).css({transform: "rotate(180deg)"})
+        $(`#${data[i].results.gameId}BelowDiv`).css({ display: "block" })
       } else {
-        $(`#${data[i].results.gameId}`).css({ height: '130px' })
+        $(`#${data[i].results.gameId}`).css({ height: '130px', borderRadius: '20px' })
         $(`#${data[i].results.gameId}moreInfo`).css({ transform: "rotate(0deg)" })
+        $(`#${data[i].results.gameId}BelowDiv`).css({ display: "none" })
       }
       extraInfo = !extraInfo;
     })
+
+    // Extra Info
+    $(`#${data[i].results.gameId}BelowDiv`).append(`
+    <div class="blueTeam">
+      <div class="teamName">
+        Blue Team
+      </div>
+      <div class="itemsName">
+        Items
+      </div>
+      <div class="kdaName">
+        KDA
+      </div>
+      <div class="damageName">
+        Damage
+      </div>
+      <div class="goldName">
+        Gold
+      </div>
+      <div class="tierName">
+      </div>
+    </div>
+    `)
+    // Getting champion names
+    for (let j = 0; j < data[i].results.participants.length; j++) {
+      if (j === data[i].results.participants.length / 2) {
+        $(`#${data[i].results.gameId}BelowDiv`).append(`
+        <div class="blueTeam">
+          <div class="teamName">
+            Red Team
+          </div>
+          <div class="itemsName">
+            Items
+          </div>
+          <div class="kdaName">
+            KDA
+          </div>
+          <div class="damageName">
+            Damage
+          </div>
+          <div class="goldName">
+            Gold
+          </div>
+          <div class="tierName">
+          </div>
+        </div>
+        `)
+      }
+      let player = data[i].results.participants[j];
+      let champ;
+      let items = 0;
+      for (key in champions) {
+        if (player.championId == champions[key].key) {
+          champ = key;
+          break;
+        }
+      }
+      // Getting Summoner Spells
+      for (key in summonerSpells) {
+        if (summonerSpells[key].key == player.spell1Id) {
+          player.spell1 = key;
+        } else if (summonerSpells[key].key == player.spell2Id) {
+          player.spell2 = key;
+        }
+      }
+      // Getting Runes
+      for (let j = 0; j < runesReforged.length; j++) {
+        for (let k = 0; k < runesReforged[j].slots[0].runes.length; k++) {
+          if (runesReforged[j].slots[0].runes[k].id == player.stats.perk0) {
+            player.rune1 = runesReforged[j].slots[0].runes[k].icon
+            break;
+          }
+        }
+      }
+      for (let j = 0; j < runesReforged.length; j++) {
+        if (runesReforged[j].id == player.stats.perkSubStyle) {
+          player.rune2 = runesReforged[j].icon
+          break;
+        }
+      }
+      $(`#${data[i].results.gameId}BelowDiv`).append(`
+      <div class="player">
+        <div class="playerChampion">
+          <img class="playerChampionIcon" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champ}.png">
+        </div>
+        <div class="playerSpells">
+          <img class="playerSpell" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${player.spell1}.png">
+          <img class="playerSpell playerSpell2" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${player.spell2}.png">
+        </div>
+        <div class="playerRunes">
+          <img class="playerRune" src="https://ddragon.leagueoflegends.com/cdn/img/${player.rune1}">
+          <img class="playerRune playerRune2" src="https://ddragon.leagueoflegends.com/cdn/img/${player.rune2}">
+        </div>
+        <div class="playerUsername">
+          ${data[i].results.participantIdentities[j].player.summonerName}
+        </div>
+        <div class="playerItems" id="${data[i].results.gameId}${player.championId}">
+        </div>
+        <div class="playerKDA">
+          <p class="margin0">${parseFloat((player.stats.kills + player.stats.assists) / player.stats.deaths).toFixed(2)}:1</p>
+          <p class="margin0 playerScore">${player.stats.kills} / ${player.stats.deaths} / ${player.stats.assists}</p>
+        </div>
+        <div class="playerDamage">
+          ${player.stats.totalDamageDealtToChampions.toString().slice(0, -3)},${player.stats.totalDamageDealtToChampions.toString().slice(-3)}
+        </div>
+        <div class="playerGold">
+          ${player.stats.goldEarned.toString().slice(0, -3)},${player.stats.goldEarned.toString().slice(-3)}
+        </div>
+      </div>
+      `)
+      // Items
+      for (let j = 0; j < 6; j++) {
+        if (player.stats[`item${j}`] != 0) {
+          let itemId = player.stats[`item${j}`];
+          $(`#${data[i].results.gameId}${player.championId}`).append(`<img class="item" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/item/${itemId}.png">`)
+          items++;
+        }
+      }
+      for (let j = 6; j > items; j--) {
+        $(`#${data[i].results.gameId}${player.championId}`).append(`<div class="emptyItem"></div>`)
+      }
+      $(`#${data[i].results.gameId}${player.championId}`).append(`
+      <img class="item" src="http://ddragon.leagueoflegends.com/cdn/${version}/img/item/${player.stats.item6}.png">`);
+    }
   }
   $('#update').click(function () {
-    matches = [];
     socket.emit('clear', username);
     socket.emit('summoner', username);
   })

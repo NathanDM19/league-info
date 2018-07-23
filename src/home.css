@@ -1,0 +1,22 @@
+body {
+  font-family: Helvetica;
+}
+#logo {
+  margin-top: 12%;
+  margin-bottom: 4%;
+  font-size: 50px;
+  text-align: center;
+}
+#main {
+  text-align: center;
+}
+#query {
+  width: 500px;
+  height: 40px;
+  font-size: 18px;
+}
+#searchButton {
+  height: 40px;
+  line-height: 0;
+  margin-top: -5px;
+}

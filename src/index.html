@@ -4,86 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#000000">
-    <!--
-      manifest.json provides metadata used when your web app is added to the
-      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
-    -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-    <link rel="stylesheet" href="index.css">
+    <title>League Info</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+    crossorigin="anonymous">
+    <link rel="stylesheet" href="home.css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="jq.js"></script>
-    <!-- <script src="home.js"></script> -->
     <script src="test.js"></script>
   </head>
   <body>
-    <div id="main">
-      <input id="query" value="Cre" placeholder="Search for Summoner" type="text">
-      <button id="searchButton">Search</button>
-      <!-- <div class="match Win">
-        <div class="match1">
-          <img class="championIcon" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">
-        </div>
-        <div class="summonerSpells">
-          <img class="summonerSpell" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/spell/SummonerFlash.png">
-          <img class="summonerSpell" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/spell/SummonerBarrier.png">
-        </div>        
-        <div class="matchScore">
-          <p class="championName">Aatrox</p>
-          <p class="score">69 / 22 / 99</p>
-          <p class="kda">5.1:1 KDA</p>
-        </div>
-        <div class="matchItems">
-          <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/1011.png">
-          <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/1039.png">
-          <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/1056.png">
-          <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/3252.png">
-          <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/2009.png">
-          <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/2139.png">
-        </div>
-        <div class="matchTrinket">
-          <img class="item" src="http://ddragon.leagueoflegends.com/cdn/8.13.1/img/item/3362.png">
-        </div>
-        <div class="matchSummoners">
-          <p class="playerName" >User1</p>
-          <p class="playerName" >User2</p>
-          <p class="playerName" >User3</p>
-          <p class="playerName" >User4</p>
-          <p class="playerName" >User5</p>
-        </div>
-        <div class="matchSummonerChamps">
-          <img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">
-          <img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">
-          <img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">
-          <img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">
-          <img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">  
-        </div>
-        <div class="matchSummoners">
-          <p class="playerName" >User1</p>
-          <p class="playerName" >User2</p>
-          <p class="playerName" >User3</p>
-          <p class="playerName" >User4</p>
-          <p class="playerName" >User5</p>
-        </div>
-        <div class="matchSummonerChamps">
-          <img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">
-          <img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">
-          <img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">
-          <img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">
-          <img class="playerChamp" src="http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png">
-        </div>
-      </div> -->
+    <div id="logo">
+      League Info
     </div>
-    <!-- <div id="root"></div> -->
+    <div id="main">
+      <input id="query" placeholder="Search for Summoner" type="text">
+      <button type="button" class="btn btn-primary" id="searchButton">Search</button>
+    </div>
   </body>
 </html>

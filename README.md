@@ -3,12 +3,24 @@ League Info is a website which show stats and information about players in Leagu
 http://league-info.herokuapp.com/search/test
 
 # Change Log
+23/07/18
+- Added extra information for each match. The arrow on the right shows the extra information for that much, such as all of the players in the game, their summoner spells, runes, items, trinkets, and stats such as KDA, damage dealt to champions and gold earned.
+- UI update for home page.
+- UI for extra match info.
+
+18/07/18
+- Updated version to match latest.
+
+16/07/18
+- Added extended match history, from now on when updating a profile, the match history will build up rather than only show the latest 20.
+- Changed the time since game to be from the end of the game, not the start of the game.
+- Changed the time since game so it updates on page reload rather than on summoner update.
 
 15/07/18
 - Update button to refresh match history, this clears the database of the current summoner and saves all new data from the requests.
 - Shows how long ago the last update was done. 
 - UI Update.
-- Ranked information for summoner, such as rank, tier, LP and rank name.
+- Ranked information for summoner, such as rank, tier, LP and league name.
 - Updated match history to now always show in order of play date.
 - Search bar at top of screen now rather than only on home page.
 - Grey slots for no items.
